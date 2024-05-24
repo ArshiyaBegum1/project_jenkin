@@ -17,15 +17,26 @@
   </dependencies>
   <build>
     <finalName>web-application</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.7</version> <!-- Update to the latest version -->
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
-  <distributionManagement>
-      <snapshotRepository>
-        <id>nexus-snapshots</id>
-        <url>http://3.109.133.36:8081/repository/maven-snapshots/</url>
-      </snapshotRepository>
-      <repository>
-        <id>nexus-releases</id>
-        <url>http://3.109.133.36:8081/repository/maven-releases/</url>
-      </repository>
-    </distributionManagement>
-</project>
+ </project>
