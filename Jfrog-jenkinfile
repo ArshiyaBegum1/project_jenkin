@@ -1,0 +1,59 @@
+pipeline {
+    agent any
+    tools
+    {
+        maven 'Maven3'
+    }
+
+    stages {
+        stage('Git checkout') {
+            steps {
+               git credentialsId: 'jfrog_gti_up', url: 'https://github.com/ArshiyaBegum1/project_jenkin.git' 
+            }
+        }
+        stage('clean and install') {
+            steps {
+               sh 'mvn clean install'
+            }
+        }
+        stage('Package') {
+            steps {
+               sh 'mvn package'
+            }
+        }
+        stage ('Server'){
+            steps {
+               rtServer (
+                 id: "Artifactory",
+                 url: 'http://54.174.206.102:8081/artifactory',
+                 username: 'admin',
+                  password: 'password',
+                  bypassProxy: true,
+                   timeout: 300
+                        )
+            }
+        }
+        stage('Upload'){
+            steps{
+                rtUpload (
+                 serverId:"Artifactory" ,
+                  spec: '''{
+                   "files": [
+                      {
+                      "pattern": "*.war",
+                      "target": "libs-snapshot-local"
+                      }
+                            ]
+                           }''',
+                        )
+            }
+        }
+        stage ('Publish build info') {
+            steps {
+                rtPublishBuildInfo (
+                    serverId: "Artifactory"
+                )
+            }
+        }
+    }
+}
